@@ -15,30 +15,64 @@ entry *findName(char lastName[], entry *pHead)
     }
     return NULL;
     */
-    return hash_table[BKDRHash(lastName)];
+
+	unsigned int idx = hash(lastName);
+	pHead = hash_table[idx];
+    while (pHead != NULL) {
+        if (strcasecmp(lastName, pHead->lastName) == 0)
+            return pHead;
+        pHead = pHead->pNext;
+	}
+	return NULL;
 }
 
+entry *hash_table[HASH_TABLE_SIZE] = {NULL};
 entry *append(char lastName[], entry *e)
 {
     /* allocate memory for the new entry and put lastName */
-    e->pNext = (entry *) malloc(sizeof(entry));
+    /*
+	e->pNext = (entry *) malloc(sizeof(entry));
     e = e->pNext;
     strcpy(e->lastName, lastName);
     e->pNext = NULL;
 
-    unsigned int idx = BKDRHash(lastName);
-    hash_table[idx] = e;
-
     return e;
+	*/
+
+	unsigned int idx = hash(lastName);
+	if(hash_table[idx] == NULL) {
+		hash_table[idx] = (entry *) malloc(sizeof(entry));
+		hash_table[idx]->pNext = NULL;
+		strcpy(hash_table[idx]->lastName, lastName);
+	} else {
+		/*
+		e = hash_table[idx];
+
+		while(e->pNext != NULL) {
+			e = e->pNext;
+		}
+		e->pNext = (entry *) malloc(sizeof(entry));	
+		e = e->pNext;
+		e->pNext = NULL;
+		strcpy(e->lastName, lastName);
+		*/
+		entry *h;
+		h = (entry *) malloc(sizeof(entry));
+		strcpy(h->lastName, lastName);
+		h->pNext = hash_table[idx];
+		hash_table[idx] = h;
+	}
+		
+	return e;	
 }
 
-unsigned int BKDRHash(char *str)
+unsigned int hash(char *key)
 {
-    unsigned int seed = 131;
-    unsigned int hash = 0;
-    while(*str) {
-        hash = hash * seed + (*str++);
+	unsigned int hashVal = 0;
+	while (*key != '\0') {
+        hashVal = (hashVal << 5) + *key++;
     }
 
-    return (hash & 0x7FFFFFFF);
+    return hashVal % HASH_TABLE_SIZE;
 }
+

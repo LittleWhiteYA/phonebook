@@ -2,7 +2,7 @@
 #define _PHONEBOOK_H
 
 #define MAX_LAST_NAME_SIZE 16
-#define MAX_UNSIGNED_INT 3000000000
+#define HASH_TABLE_SIZE 42737
 
 #define OPT 1
 typedef struct __PHONE_BOOK_ENTRY {
@@ -23,10 +23,10 @@ typedef struct __NAME_DETAIL {
     char zip[5];
 } detail;
 
-entry *hash_table[MAX_UNSIGNED_INT];
+entry *hash_table[HASH_TABLE_SIZE];
 
 entry *findName(char lastName[], entry *pHead);
 entry *append(char lastName[], entry *e);
-unsigned int BKDRHash(char *str);
+unsigned int hash(char *key);
 
 #endif
